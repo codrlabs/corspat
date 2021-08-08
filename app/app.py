@@ -22,7 +22,7 @@ def after_request(response):
     return response
 
 # Configure session to use filesystem (instead of signed cookies)
-app.config["SESSION_FILE_DIR"] = mkdtemp()
+# app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
@@ -92,10 +92,10 @@ def path():
 
         # Success message
         flash("Course added successfully.")
-    
+
     # Display courses
     courses = get_courses(session["user_id"])
-        
+
     return render_template('path.html', courses=courses)
 
 @app.route("/delete/<uuid>", methods=['POST'])
@@ -154,7 +154,7 @@ def timetracker():
     # Progress started timetrack
     def tt_progress():
         check_last = cur.execute("SELECT * FROM timetracker WHERE user_id = ? ORDER BY started_at DESC LIMIT 1", (session['user_id'],)).fetchone()
-        
+
         if check_last is not None:
             time_start = datetime.strptime(check_last[4],"%Y-%m-%d %H:%M:%S")
             time_now = datetime.strptime(get_now(),"%Y-%m-%d %H:%M:%S")
@@ -162,7 +162,7 @@ def timetracker():
             return str(datetime.strptime(str(time_inverval),"%H:%M:%S"))[11:]
         else:
             return False
-    
+
     return render_template('timetracker.html', current_courses=current_courses, timetrack_history=timetrack_history, progress=tt_progress())
 
 @app.route("/update_tt", methods=["POST"])
@@ -191,10 +191,10 @@ def update_tt():
     else:
         # If row history have started_at then add finished_at
         cur.execute("UPDATE timetracker SET finished_at = ? WHERE user_id = ? AND course_uuid = ? AND finished_at IS NULL", (get_now(), session['user_id'], get_data[1],))
-        
+
         # Calculate difference time
         time_interval = str(datetime.strptime(get_now(),"%Y-%m-%d %H:%M:%S") - datetime.strptime(check_last[4],"%Y-%m-%d %H:%M:%S"))
-        
+
         # Update duration
         cur.execute("UPDATE timetracker SET duration = ? WHERE user_id = ? AND course_uuid = ? AND duration IS NULL", (time_interval, session['user_id'], get_data[1],))
 
@@ -214,7 +214,7 @@ def delete_tt(uuid):
         cur = db.cursor()
         cur.execute("DELETE FROM timetracker WHERE track_uuid = ? AND user_id = ?", (uuid, session["user_id"],))
         db.commit()
-        flash("Entry removed successfully.")     
+        flash("Entry removed successfully.")
 
     return redirect("/timetracker")
 
@@ -313,7 +313,7 @@ def download():
         return send_file(f'{random_csv}.csv',
                             mimetype='text/csv',
                             attachment_filename=f'{random_csv}.csv',
-                            as_attachment=True)                            
+                            as_attachment=True)
 
     return redirect("/settings")
 
@@ -335,12 +335,12 @@ def login():
         # Ensure username was submitted
         if not request.form.get("email"):
             flash("You must provide an Email.")
-            return render_template('login.html') 
+            return render_template('login.html')
 
         # Ensure password was submitted
         elif not request.form.get("password"):
             flash("You must provide a password.")
-            return render_template('login.html') 
+            return render_template('login.html')
 
         # Query database for username
         cur = db.cursor()
@@ -355,7 +355,7 @@ def login():
         checkpassword = bcrypt.checkpw(request.form.get("password").encode("utf-8"), query[2])
         if not checkpassword:
             flash("Invalid username and/or password.")
-            return render_template('login.html')        
+            return render_template('login.html')
 
         # Remember which user has logged in
         session["user_id"] = query[0]
@@ -412,7 +412,7 @@ def register():
             return render_template('register.html')
 
         else:
-            # Query database for username            
+            # Query database for username
             query = cur.execute("INSERT INTO users (email, hash, first_name, last_name, is_verified, created_at) VALUES(?, ?, ?, ?, ?, ?)", (request.form.get("email").lower(), bcrypt.hashpw(request.form.get("password").encode("utf-8"), bcrypt.gensalt()), request.form.get("first_name").capitalize(), request.form.get("last_name").capitalize(), 0, get_now(),)).fetchone()
             session["user_id"] = query
 
@@ -424,7 +424,7 @@ def register():
 
             return render_template("/login.html")
 
-    else:        
+    else:
         return render_template('register.html')
 
 @app.route("/forgot")
