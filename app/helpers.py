@@ -41,7 +41,7 @@ def stuck(message, code=400):
     return render_template("stuck.html", top=code, bottom=message), code
 
 def get_metadata(url):
-    ''' 
+    '''
     Metadata parser: Returns dictionary with (url, title, description and image link)
     '''
     # Check if URI exists
@@ -104,7 +104,7 @@ def get_courses(user):
             'isfinished': row[7],
             'added': datetime.strptime(row[8], '%Y-%m-%d %H:%M:%S').strftime("%b. %d, %Y")
         })
-    
+
     return courses
 
 # Solution by 'Maxfield' here: https://stackoverflow.com/questions/16778435/python-check-if-website-exists
@@ -134,7 +134,7 @@ def get_now():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 def good_work():
-    
+
     # Sentences come from here: https://www.myenglishteacher.eu/blog/keep-up-the-good-work/
     sentences = ['Good job!', 'Couldn’t have done it better myself', 'You’re on the right track now!',
                  'Keep up the great work!', 'Good job! Keep it up!', 'Keep up the hard work!', 'You’re doing a great job',
