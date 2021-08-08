@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Error
+{% endblock %}
+
+{% block main %}
+<div class="container-fluid">
+    <div class="text-center mt-5">
+        <div class="error mx-auto" data-text="{{ top }}">
+            <p class="m-0">{{ top }}</p>
+        </div>
+        <p class="text-dark mb-5 lead">{{ bottom }}</p>
+        <p class="text-black-50 mb-0">It looks like you found a glitch in the matrix...</p><a href="/">← Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&display=swap');
+
+a {
+    text-decoration: none;
+}
+
+.bubble {
+    text-align: center;
+    background-color: hsla(225, 69%, 59%, 10%);
+    border-radius: 0.5em;
+    padding: 0.5em;
+}
+
+.pathAction {    
+    text-align: center;
+}
+
+.list-inline-item {
+    margin: 1rem 0;
+}
+
+.pathAction #pathFinish:hover {
+    color: #fff !important;
+}
+
+#text-logo {
+    font-family: 'Cinzel Decorative', cursive;
+}
+
+/* Timetracker: Buttons */
+.btn-circle.btn-xl {
+    width: 70px;
+    height: 70px;
+    padding: 4vw;
+    border-radius: 100%;
+    font-size: 24px;
+    line-height: 1.33;
+}
+
+.btn-circle {
+    width: 30px;
+    height: 30px;
+    padding: 6px 0px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.42857;
+    margin: 0 0.5em;
+}
+
+#counter {
+    font-size: 11vw;
+}
+
+/* Layout */
+.toast {
+    z-index: 1000;
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+}
+
+/* Settings */
+#reset_data:hover {
+    color: white !important;
+}

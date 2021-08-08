@@ -1,0 +1,162 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Time Tracker
+{% endblock %}
+
+{% block main %}
+<div class="card mb-4 ms-4 me-4">
+    <div class="card-header text-primary m-0 fw-bold">
+        Time Tracking
+    </div>
+    <div class="card-body">
+        <p class="card-text">Choose a course, then start the stopwatch below before any study session then stop it once finished.</p>
+
+        <!-- FORM START/STOP -->
+        <form action="/update_tt" method="post">
+            <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="this_course">
+                {% if not current_courses %}
+                <option selected disabled>First, add a course on your path</option>
+                {% endif %}
+
+                {% for course in current_courses %}
+                <option value="{{ course[0] }}">{{ course[1] }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- Buttons -->
+            <div class="text-center">
+                <span id="counter">00:00:00</span><br />
+                <div class="mb-3">
+                    {% if current_courses %}
+                        {% if progress == False or timetrack_history[0][5] != None %}
+                        <button type="submit" onclick="startTimer()" class="btn btn-success btn-circle btn-xl text-white">Start</button>
+                        {% else %}
+                        <button type="submit" onclick="startTimer()" class="btn btn-danger btn-circle btn-xl text-white">Stop</button>                    
+                        {% endif %}
+                    {% else %}
+                        <button type="submit" onclick="startTimer()" class="btn btn-success btn-circle btn-xl text-white" disabled>Start</button>
+                    {% endif %}
+                    
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<!-- Timetracker -->
+<div class="container-fluid mb-4">
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <p class="text-primary m-0 fw-bold">History</p>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
+                <table class="table my-0" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Course</th>
+                            <th>Started</th>
+                            <th>Ended</th>
+                            <th>Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in timetrack_history %}
+                        <tr class="align-middle">
+                            <td><img class="rounded-circle me-2" width="30" height="30"
+                                    src="https://api.faviconkit.com/{{ row[2] }}/144"> {{ row[3] }}</td>
+                            <td>{{ row[4] }}</td>
+                            <td>{{ row[5] }}</td>
+                            <td>{{ row[6] }}</td>
+                            <form method="post" action="{{ url_for('delete_tt', uuid = row[7]) }}">
+                            <td><button class="btn text-danger" type="submit"><i class="far fa-times-circle" onmouseover="this.className = 'fas fa-times-circle'"; onmouseout="this.className='far fa-times-circle'" ></i></button></td>                            
+                            </form>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td><strong>Course</strong></td>
+                            <td><strong>Started</strong></td>
+                            <td><strong>Ended</strong></td>
+                            <td><strong>Duration</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const timer = document.getElementById('counter');
+
+    /* Timestamps needed */
+    {% if progress != False %}
+        let time_start = "{{ progress }}";
+        let time_end = ("{{ timetrack_history[0][5] }}" == "None") ? 'None' : "{{ timetrack_history[0][5] }}".slice(11);
+    {% else %}
+        let time_start = "00:00:00";
+        let time_end = "00:00:00"; 
+    {% endif %}
+
+    /* Default time */
+    let hr = min = sec = 0;
+
+    /* Timetrack status */
+    let started = 0;
+
+    function checkWatch() {
+        /* Check if status not active, else resume  */
+        if (time_end == "None") {
+            hr = parseInt(time_start.slice(0, 2));
+            min = parseInt(time_start.slice(3, 5));
+            sec = parseInt(time_start.slice(6, 8));
+            started = 1;
+        }
+        else {
+            started = 0;
+        }
+    }
+
+    /* Function to check */
+    checkWatch()
+
+    // Stopwatch system
+    function startTimer() {
+        if (started == 1) {
+
+            sec++;
+        
+            if (sec == 60) {
+                sec = 0;
+                min++;
+            }
+            if (min == 60) {
+                min = sec = 0;
+                hr++;
+            }
+        
+            if (sec.toString().length < 2) {
+                sec = '0' + sec;
+            }
+            if (min.toString().length < 2) {
+                min = '0' + min;
+            }
+            if (hr.toString().length < 2) {
+                hr = '0' + hr;
+            }
+            
+            timer.innerHTML = hr + ':' + min + ':' + sec;        
+            setTimeout("startTimer()", 1000);
+        }
+    }
+    startTimer()
+</script>
+{% endblock %}
+
+{% block active %}
+<script>document.querySelector('#timetracker').classList.toggle('active');</script>
+{% endblock %}

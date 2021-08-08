@@ -1,0 +1,131 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    FAQ
+{% endblock %}
+
+{% block main %}
+<h3 class="mb-4">Frequently Asked Questions</h3>
+<div class="accordion mb-4" id="accordionFAQ">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                aria-expanded="true" aria-controls="collapseOne">
+                The idea behind the website
+            </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+            data-bs-parent="#accordionFAQ">
+            <div class="accordion-body">
+                <p>
+                    The idea came long before I start the course CS50. At the time I had to create a Google sheet to be
+                    able to track my
+                    progression. Needless to say, that it was a wonderful idea (and it&rsquo;s still is maybe). But
+                    being able to have
+                    my eyes on the data growing and stacking up every day was a huge source of motivation for me. But
+                    unfortunately, it
+                    has some limitations I had to found a solution to.</p>
+                <p>
+                    Some limitations I encountered during this time are:</p>
+                <ol style="list-style-type: undefined;">
+                    <li>As the rows of the Google/Excel sheet started to expand, I was losing speed on my browser.</li>
+                    <li>Manually keeping track of the hours I was studying on was tedious.</li>
+                    <li>And finally, the last important point that pushed me to create Corspat was that the data had to
+                        be checked
+                        multiple times in case of an error while manipulating the data. This could easily lead to data
+                        errors if not
+                        careful.</li>
+                </ol>
+                <p>
+                    Having an error-free environment where I can store my timesheet in only one click is a dream come
+                    true.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingTwo">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                The purpose of the website
+            </button>
+        </h2>
+        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+            data-bs-parent="#accordionFAQ">
+            <div class="accordion-body">
+                <p>
+                    The internet has turned to a sea of interesting courses and certificates you can gain
+                    just by
+                    finishing the course. It became difficult to draw a path or to keep track of your progression. This
+                    simple routine
+                    helped me to learn more about subjects I decided to learn about (which I hope would be the case for
+                    you too). To
+                    first draw a series of courses and get them done one at the time.
+                </p>
+                <p>
+                    I hope that as it helped me it will do the same for someone else. And I will for sure continue to
+                    work on this
+                    project and use it as long as I can.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingThree">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                Technology used
+            </button>
+        </h2>
+        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+            data-bs-parent="#accordionFAQ">
+            <div class="accordion-body">
+                <p>
+                    For those who are interested, this website was created using different technologies like Bootstrap,
+                    HTML/CSS,
+                    Javascript, SQL and Flask (Jinja2).
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingFour">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                Openness to new ideas
+            </button>
+        </h2>
+        <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour"
+            data-bs-parent="#accordionFAQ">
+            <div class="accordion-body">
+                <p>
+                    To whoever has ideas to implement or features to improve, feel free to contact me on Github. And
+                    thank you.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingFive">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                Openness to contribution from other developers
+            </button>
+        </h2>
+        <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive"
+            data-bs-parent="#accordionFAQ">
+            <div class="accordion-body">
+                <p>
+                    Of course, I hope that newcomers would help build or improve this project. Any help is welcome, it
+                    took me several
+                    hours to work on this and as you can see it&rsquo;s still a work in progress.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block active %}
+<script>document.querySelector('#faq').classList.toggle('active');</script>
+{% endblock %}

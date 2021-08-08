@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Corspat - {% block title %}{% endblock %}</title>
+    <link href="/static/favicon.ico" rel="icon">
+    <link rel="stylesheet" href="/static/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i">
+    <link rel="stylesheet" href="/static/assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="/static/assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/assets/fonts/fontawesome5-overrides.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+
+</head>
+
+{% if get_flashed_messages() %}
+<body id="page-top" onload="see()">
+{% else %}
+<body id="page-top">
+{% endif %}
+
+    <!-- Toasts (test zone) -->
+    {% if get_flashed_messages() %}
+        <div class="toast align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive"
+            aria-atomic="true">
+            {% for message in get_flashed_messages() %}
+            <div class="d-flex">
+                <div class="toast-body">
+                    {{ message }}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <!-- Toasts (end zone) -->
+
+    {% if session.user_id %}
+    <div id="wrapper">
+        <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0 toggled">
+            <div class="container-fluid d-flex flex-column p-0"><a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="/">
+                    <div class="sidebar-brand-icon rotate-n-15 mx-1"><i class="fas fa-book-open"></i></div>
+                    <div class="sidebar-brand-text mx-1" id="text-logo"><span>CORSPAT</span></div>
+                </a>
+                <hr class="sidebar-divider my-0">           
+
+                    <ul class="navbar-nav text-light" id="accordionSidebar">
+                        <li class="nav-item"><a id="path" class="nav-link" href="path"><i class="fas fa-road fa-fw"></i><span> Path</span></a></li>
+                        <li class="nav-item"><a id="timetracker" class="nav-link" href="timetracker"><i class="fas fa-table fa-fw"></i><span> Time Tracker</span></a></li>
+                        <li class="nav-item"><a id="motivation" class="nav-link" href="motivation"><i class="fas fa-dumbbell fa-fw"></i><span> Motivation</span></a></li>
+                        <li class="nav-item"><a id="faq" class="nav-link" href="faq"><i class="fas fa-question-circle fa-fw"></i><span> FAQ</span></a></li>
+                    </ul>
+
+                {% endif %}
+                <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
+            </div>
+        </nav>
+        <div class="d-flex flex-column" id="content-wrapper">
+            <div id="content">
+                {% if session.user_id %}
+                <nav class="navbar navbar-light navbar-expand bg-white shadow mb-4 topbar static-top">
+                    <div class="container-fluid"><button class="btn btn-link d-md-none rounded-circle me-3" id="sidebarToggleTop" type="button"><i class="fas fa-bars"></i></button>
+                        <!-- Progress bar -->
+                        <div class="container">
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="{{ session.progress }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ session.progress }}%">{{ session.progress }}%</div>
+                            </div>
+                        </div>
+
+                        <!-- Alerts center -->
+                        <ul class="navbar-nav flex-nowrap ms-auto">
+                            <li class="nav-item dropdown no-arrow mx-1">
+                                <div class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#">{% if alerts %}<span class="badge bg-danger badge-counter">{{ alertslen }}</span>{% endif %}<i class="fas fa-bell fa-fw"></i></a>
+                                    <div class="dropdown-menu dropdown-menu-end dropdown-list animated--grow-in">
+                                        <h6 class="dropdown-header">alerts center</h6>
+                                        
+                                        {% if alerts %}
+                                            {% for alert in alerts %}
+                                            <a class="dropdown-item d-flex align-items-center" {% if alert.link %}href="{{ alert.link }}"{% endif %}>
+                                                <div class="me-3">
+                                                    <div class="bg-{{ alert.urgency.color }} icon-circle"><i class="fas {{ alert.urgency.icon }} text-white"></i></div>
+                                                </div>
+                                                <div><span class="small text-gray-500">{{ alert.date }}</span> 
+                                                    <p>{{ alert.msg }}</p>
+                                                </div>
+                                            </a>
+                                            {% endfor %}
+
+                                        {% else %}
+                                            <a class="dropdown-item d-flex align-items-center">
+                                                <div class="me-3">
+                                                    <div class="bg-success icon-circle"><i class="fas fa-laugh-wink text-white"></i></div>
+                                                </div>
+                                                <div>
+                                                    <span class="small text-gray-500">Today</span> 
+                                                    <p>You currently have no new notifications.</p>
+                                                </div>
+                                            </a>
+                                        {% endif %}
+                                        
+                                        <!-- <a class="dropdown-item text-center small text-gray-500" href="#">{{ alerts.date }}</a> -->
+                                    </div>
+                                </div>
+                            </li>
+                            <div class="d-none d-sm-block topbar-divider"></div>
+                            <li class="nav-item dropdown no-arrow">
+                                <div class="nav-item dropdown no-arrow">
+                                    <a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#"><span class="d-none d-lg-inline me-2 text-gray-600 small">{{ session.full_name }}</span><img class="border rounded-circle img-profile" src="https://avatars.dicebear.com/api/bottts/{{ session.api }}.svg"></a>
+                                    <div class="dropdown-menu shadow dropdown-menu-end animated--grow-in"><a class="dropdown-item" href="/settings"><i class="fas fa-cogs fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Settings</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Logout</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                {% endif %}
+                <div class="container-fluid">
+                    {% block main %}{% endblock %}
+                </div>
+            </div>
+            <footer class="bg-white sticky-footer">
+                <div class="container my-auto">
+                    <div class="text-center my-auto copyright"><span>Copyright © <a href="https://inidal.dev" target="_blank">Nidal Iguer</a> 2021</span></div>
+                </div>
+            </footer>
+        {% if session.user_id %}
+        </div><a class="border rounded d-inline scroll-to-top me-3" href="#page-top" id="scrollTop" style="opacity: 0;"><i class="fas fa-angle-up"></i></a>
+        {% endif %}
+    </div>
+    <script src="/static/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/assets/js/theme.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script>
+        // Bar progression color changing
+        let show = function () {
+            get_class = document.getElementsByClassName("progress-bar")[0]
+            curr_value = get_class.attributes[2].value;
+
+            if (curr_value >= 90) {
+                get_class.classList.add("bg-primary");
+            }
+            else if (curr_value >= 45 && curr_value < 90) {
+                get_class.classList.add("bg-success");
+            }
+            else if (curr_value >= 25 && curr_value < 45) {
+                get_class.classList.add("bg-warning");
+            }
+            else if (curr_value < 25) {
+                get_class.classList.add("bg-danger");
+            }
+        };
+        show();
+    </script>
+    <script>
+        // Scroll down (Button-Top fade in)
+        $(window).scroll(function () {
+            $("#scrollTop").css("opacity", 0 + $(window).scrollTop() / 250);
+        });
+    </script>
+    <script>
+        var option = {
+            animation: true,
+            delay: 5000,
+        }
+
+        var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+        var toastList = toastElList.map(function (toastEl) {
+        return new bootstrap.Toast(toastEl, option)
+        })
+
+        function see() {
+            for (var i=0; i<toastList.length; i++) {
+                toastList[i].show();
+            }
+        }
+    </script>
+    {% block active %}{% endblock %}
+</body>
+
+</html>

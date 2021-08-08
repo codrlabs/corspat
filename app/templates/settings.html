@@ -1,0 +1,231 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Read Me
+{% endblock %}
+
+{% block main %}
+<!-- General -->
+<div class="card mb-3" style="max-width: 50rem; margin: 2rem auto;">
+    <div class="card-header">
+        Profile
+    </div>
+    <div class="card-body">
+        <p class="card-text">Edit information about yourself.</p>
+        <div class="container">
+
+            <!-- Forms -->            
+            <form action="/settings" method="post">
+
+                <!-- First / last name -->
+                <div class="row mb-3">
+                    <div class="col">
+                        <input type="text" class="form-control" value="{{ user_info[3] }}" aria-label="First name" name="first_name" required>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" value="{{ user_info[4] }}" aria-label="Last name" name="last_name" required>
+                    </div>            
+                </div>
+
+                <!-- Email -->
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <input type="email" class="form-control" value="{{ user_info[1] }}" id="inputEmail4" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" name="email" required>
+                    </div>
+                </div>
+
+                {% if user_info[5] == 0 %}
+                <!-- Email confirmation message/link -->
+                <div class="row mx-0">
+                    <div class="alert alert-warning col-md-12 mb-2" role="alert">
+                        Your email is not confirmed. Please check your inbox.<br />
+                        <a href="#">Resend confirmation</a>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Divider -->
+                <div class="dropdown-divider mb-3"></div>
+
+                <!-- Current password / Update button -->
+                <div class="input-group mb-3">
+                    <input type="password" class="form-control" placeholder="Enter current password" aria-label="Enter Current Password" aria-describedby="button-addon2" name="password" required>
+                    <button class="btn btn-primary" type="submit" id="gen_update">Update</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- Password -->
+<div class="card mb-3" style="max-width: 50rem; margin: 2rem auto;">
+    <div class="card-header">
+        Password
+    </div>
+    <div class="card-body">
+        <p class="card-text">Change your password here. Make sure it's at least 6 characters.</p>
+        <div class="container">
+            <!-- Forms -->
+            
+            <form action="/settings" method="post">
+                <!-- Password -->
+                <div class="row mb-3">
+                    <div class="col">
+                        <input type="password" class="form-control" placeholder="Enter New Password" id="new_password" name="new_password" required>
+                    </div>
+                    <div class="col">
+                        <input type="password" class="form-control" placeholder="Re-type New Password" id="verify_password" name="verify_password" required>
+                    </div>
+                </div>
+
+                <!-- Divider -->
+                <div class="dropdown-divider mb-3"></div>
+
+                <!-- Current password / Update button -->
+                <div class="input-group mb-3">
+                    <input type="password" class="form-control" placeholder="Enter current password" aria-label="Enter Current Password" aria-describedby="button-addon2" name="password">
+                    <button class="btn btn-primary" type="submit" id="pass_update">Update</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- Data -->
+<div class="card" style="max-width: 50rem; margin: 2rem auto;">
+    <div class="card-header">
+        Data
+    </div>
+    <div class="card-body">
+        <div>
+            <p>
+                <strong>Downloading your data</strong> is a simple and safe action, you can proceed by reading the content of the first accordion item below.
+            </p>
+            <p>
+                <strong>Reseting or deleting your data</strong> is another story. These are irreversible actions and you could permenantly loose your data. Proceed with care and only if you're sure of your decision otherwise please be careful.
+            </p>
+        </div>
+    </div>
+
+    <!-- Accordion -->
+    <div class="accordion accordion-flush" id="accordionFlushExample">
+
+        <!-- Download your data -->
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="flush-headingOne">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+              Download your data
+            </button>
+          </h2>
+          <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+            <div class="accordion-body">
+                <p>
+                    Your data will be served to you as a <mark><strong>CSV file</strong></mark>. Then you can create visualizations with it if you want using Google Sheet or Microsoft Excel. 
+                </p>
+
+                <figure>
+                    <blockquote class="blockquote">
+                        <p class="h6">CSV is a simple file format used to store tabular data, such as a spreadsheet or database. Files in the CSV format can be imported to and exported from programs that store data in tables, such as Microsoft Excel or OpenOffice Calc. CSV stands for "comma-separated values".</p>
+                    </blockquote>
+                    <figcaption class="blockquote-footer">
+                        <cite title="computerhope"><a href="https://www.computerhope.com/issues/ch001356.htm" target="_blank">computerhope.com</a></cite>
+                    </figcaption>
+                </figure>
+
+                <form action="/settings/dl" method="post">
+                    <div class="mb-1">
+                        <button type="submit" class="btn btn-success text-white">Download your data</button>
+                    </div>
+                </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reset your data -->
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="flush-headingTwo">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+              Reset your data
+            </button>
+          </h2>
+          <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+            <div class="accordion-body">     
+                <p>
+                    <strong>Resetting your account</strong> will delete all your records from the Path to Timetracker, your account will remain as it was. But the data will be lost forever. 
+                </p>
+    
+                <p><strong>Proceed with care.</strong></p>
+
+                <form action="/settings" method="post">
+                    
+                    <!-- Confirmation checkbox -->
+                    <div class="col-12 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Reset" id="resetConfirmation" name="check_confirmation" required>
+                            <label class="form-check-label mb-1" for="resetConfirmation">
+                                I confirm that I have read and understand the above and still want to proceed.
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Current password / Update button -->
+                    <div class="input-group mb-2">
+                        <input type="password" class="form-control" placeholder="Enter current password" aria-label="Enter Current Password" aria-describedby="button-addon2" name="password" required>
+                        <button class="btn btn-outline-warning" type="submit" id="reset_data">Reset your data</button>
+                    </div>
+                </form>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Delete your account -->
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="flush-headingThree">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+              Delete your account
+            </button>
+          </h2>
+          <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
+              
+              <div class="accordion-body">
+                <p>We are sorry to see go. 😢</p>
+    
+                <p>
+                    But <strong>before proceeding,</strong> please note that this is an irreversible action and can't be undone. You
+                    won't have access to your account anymore and all your data will be permanentaly deleted.
+                </p>
+    
+                <p>
+                    <strong>After proceeding</strong>, if you ever feel the need to use our service in the future. Feel free to create
+                    another account with the same email and we'll be more than happy to have you back again.
+                </p>
+
+                <form action="/settings" method="post">
+                    <div class="col-12 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Delete" id="deleteConfirmation" name="check_confirmation" required>
+                            <label class="form-check-label mb-1" for="deleteConfirmation">
+                                I confirm that I have read and understand the above and still want to proceed.
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="input-group mb-2">
+                        <input type="password" class="form-control" placeholder="Enter current password" aria-label="Enter Current Password" aria-describedby="button-addon2" name="password" required>
+                        <button class="btn btn-outline-danger" type="submit" id="delete_data">Delete your account</button>
+                    </div>
+                </form>
+
+            </div>
+          </div>
+        </div>
+      </div>
+</div>
+{% endblock %}
+
+{% block active %}
+<script>$('#read').toggleClass('active');</script>
+{% endblock %}

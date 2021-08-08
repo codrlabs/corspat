@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Build Your Path
+{% endblock %}
+
+{% block main %}
+
+<!-- Add course -->
+<form action="/path" method="post">
+    <div class="card text-center mb-4" style="max-width: 50rem; margin: 2rem auto;">
+        <div class="card-body">
+            <span><h3 class="card-title">Add course</h3>
+            <p class="card-text">Create your own learning path. <br />Add the order of course's links you want to follow.</p>
+            <input type="url" class="form-control mb-3" id="courseInput" name="linkCourse"
+                placeholder="For example: https://www.edx.org/course/introduction-computer-science-harvardx-cs50x..." required>
+            <div class="d-grid gap-2 col-12 mx-auto">
+                <button class="btn btn-primary text-white" type="submit" id="courseSubmit">Submit</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Display courses -->
+    {% for row in courses %}
+    {% if not row.isfinished %}
+    <div class="card mb-5 shadow" id="{{ row.uuid }}" style="max-width: 50rem; margin: 0 auto;">
+    {% else %}
+    <div class="card mb-5 shadow" id="{{ row.uuid }}" style="max-width: 50rem; margin: 0 auto; opacity: 0.5;">
+    {% endif %}
+        <a href="{{ row.url }}" target="_blank"><img class="card-img-top" src="{{ row.img }}" alt="{{ row.title }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ row.title }}</h5>
+                <p class="card-text text-justify">{{ row.desc }}</p>
+                <p class="card-text text-center"><small class="text-muted">You added this course on {{ row.added }}</small></p>
+        </a>
+    
+    
+        <!-- Delete/Finished button -->
+        <div class="pathAction">
+            <li class="list-inline-item">
+                <form method="post" action="{{ url_for('delete_course', uuid = row.uuid) }}">
+                    <button class="btn {{ 'btn-danger' if not row.isfinished else 'btn-outline-danger' }} btn-sm rounded-2" type="submit" data-toggle="tooltip" data-placement="top"
+                        title="Remove"><i class="fas fa-trash"></i> Remove</button>                        
+                </form>
+            </li>
+            <li class="list-inline-item">
+                <form method="post" action="{{ url_for('toggle_finish', uuid = row.uuid) }}">
+                    <button class="btn {{ 'btn-outline-success' if not row.isfinished else 'btn-success text-white' }} btn-sm rounded-2" type="submit" data-toggle="tooltip"
+                        data-placement="top" title="Finish" id="pathFinish"><i class="fas fa-check"></i> {{ 'Finish' if not row.isfinished else 'Unfinish' }}</button>
+                </form>
+            </li>
+        </div>
+    </div>
+    </div>
+    {% endfor %}
+
+{% endblock %}
+
+{% block active %}
+<script>document.querySelector('#path').classList.toggle('active');</script>
+<script>
+    const link = document.querySelector('#courseInput');
+    const submit = document.querySelector('#courseSubmit');
+
+    submit.addEventListener('click', () => {
+        if (link.validity.typeMismatch) {
+            link.setCustomValidity('Make sure the link starts with "http://" or "https://".\nOr just copy/paste the link.');
+        } else {
+            link.setCustomValidity('');
+        }
+    })
+</script>
+{% endblock %}
