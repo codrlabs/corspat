@@ -2,16 +2,16 @@ import requests
 from functools import wraps
 from flask import session, redirect, render_template
 from bs4 import BeautifulSoup
-import sqlite3
 from datetime import datetime
 from urllib.parse import urlparse
 import random
+from sqlalchemy import create_engine
 
 # Get requests from API
 response = requests.get("https://type.fit/api/quotes").json()
 
 # Configure SQLite to use the database
-db = sqlite3.connect('corspat.db', check_same_thread=False)
+db = create_engine('postgresql+psycopg2://pwbznxyzdvfvsd:90859372f9d60e0a16687c5020f8cbb59389916d8fd545cf06ebff09f836fb01@ec2-54-196-65-186.compute-1.amazonaws.com:5432/dbpf8a9abului7')
 
 def quote_length():
     return len(response)
@@ -86,9 +86,7 @@ def get_courses(user):
     Getting as a dictionary the courses added by user
     '''
     # Display courses
-    cur = db.cursor()
-    cur.execute("SELECT * FROM path WHERE user_id = ?", (user,))
-    get_courses = cur.fetchall()
+    get_courses = db.execute("SELECT * FROM path WHERE user_id = %s ORDER BY created_at ASC", user).fetchall()
 
     courses = []
 
@@ -120,10 +118,8 @@ def uri_exists(uri: str) -> bool:
         return False
 
 def get_progression():
-        cur = db.cursor()
-
-        prog_c = cur.execute("SELECT COUNT(finished) FROM path WHERE user_id = ? and finished = 1;", (session["user_id"],)).fetchone()
-        total_c = cur.execute("SELECT COUNT(finished) FROM path WHERE user_id = ?;", (session["user_id"],)).fetchone()
+        prog_c = db.execute("SELECT COUNT(finished) FROM path WHERE user_id = %s and finished = 1;", session["user_id"]).fetchone()
+        total_c = db.execute("SELECT COUNT(finished) FROM path WHERE user_id = %s;", session["user_id"]).fetchone()
 
         try:
             return round((prog_c[0] / total_c[0]) * 100)
