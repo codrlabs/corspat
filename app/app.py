@@ -2,6 +2,7 @@ from helpers import quote, quote_length, login_required, stuck, get_metadata, ge
 import bcrypt
 from flask import Flask, flash, redirect, render_template, request, session, send_file
 from flask_session import Session
+from flask_mail import Mail, Message
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from tempfile import mkdtemp
 from datetime import datetime
@@ -27,8 +28,17 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-# Configure SQLite to use the database
+# Configure SQLAlchemy to use the database
 db = create_engine('postgresql+psycopg2://pwbznxyzdvfvsd:90859372f9d60e0a16687c5020f8cbb59389916d8fd545cf06ebff09f836fb01@ec2-54-196-65-186.compute-1.amazonaws.com:5432/dbpf8a9abului7')
+
+# Configure Flask-Mail to use Gmail STMP
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+# app.config['MAIL_USERNAME'] = '***********'
+# app.config['MAIL_PASSWORD'] = '***********'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail = Mail(app)
 
 # Needed variables
 now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -398,6 +408,87 @@ def register():
 @app.route("/forgot")
 def forgot():
     return render_template('forgot.html')
+
+@app.route("/send_reset/", methods=["POST"])
+def send():
+    if request.method == "POST":
+        forgot_email = request.form.get("email").lower()
+
+        query_email = db.execute("SELECT email FROM users WHERE email = %s", forgot_email).fetchone()
+
+        if query_email:
+
+            # Create temporary key to validate link
+            db.execute("UPDATE users SET recovery = %s WHERE email = %s", str(uuid.uuid1()), forgot_email)
+            query_data = db.execute("SELECT email, recovery FROM users WHERE email = %s", forgot_email).fetchone()
+
+            # Send email with link key
+            msg = Message('Hello', sender = 'corspat.app@gmail.com', recipients = [request.form.get("email")])
+            msg.body = f"Hello, to reset your password please follow this link:\r\nhttps://corspat.herokuapp.com/reset_password/{query_data[0]}/{query_data[1]}"
+            mail.send(msg)
+
+    flash("We’ve sent you an email with a link to reset your password. You should receive it in a few moments.")
+    return render_template('login.html')
+
+@app.route("/reset_password/<email>/<uuid>", methods=["GET", "POST"])
+def reset_password(email, uuid):
+
+    if request.method == "GET":
+        query_email = db.execute("SELECT email, recovery FROM users WHERE email = %s", email).fetchone()
+
+        if query_email[0] == email and query_email[1] == uuid :
+            return render_template("resetpass.html", email=email)
+
+@app.route("/confirm_password", methods=["POST"])
+def confirm_password():
+
+    if request.method == "POST":
+
+        new_password = request.form.get("new_password")
+        confirm_password = request.form.get("verify_password")
+        email = request.form.get("email").lower()
+
+        if new_password == confirm_password:
+            db.execute("UPDATE users SET hash = %s WHERE email = %s", (bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())).decode(), email)
+            db.execute("UPDATE users SET recovery = %s WHERE email = %s", (bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())).decode(), email)
+            db.execute("UPDATE users SET is_verified = 1 WHERE email = %s", email)
+            flash('Password successfully changed.')
+            return render_template('login.html')
+        
+        else:
+            flash("Please make sure your passwords match.")
+            return render_template('login.html')
+
+@app.route("/send_verify/")
+@login_required
+def send_verify():
+
+    verify_user = db.execute("SELECT * FROM users WHERE id = %s;", session['user_id']).fetchone()
+
+    if verify_user[5] == 0:
+        # Create temporary key to validate link
+        db.execute("UPDATE users SET verify_key = %s WHERE email = %s", str(uuid.uuid1()), verify_user[1])
+        query_data = db.execute("SELECT email, verify_key FROM users WHERE email = %s", verify_user[1]).fetchone()
+
+        # Send email with link key
+        msg = Message('Hello', sender = 'corspat.app@gmail.com', recipients = [verify_user[1]])
+        msg.body = f"Hello, please verify your email by follow this link:\r\nhttp://127.0.0.1:5000/verify_email/{query_data[0]}/{query_data[1]}"
+        mail.send(msg)
+        flash('Email sent, please verify your email')
+        return redirect('/settings')
+    else:
+        return redirect('/')
+
+@app.route("/verify_email/<email>/<uuid>", methods=["GET", "POST"])
+def verify_email(email, uuid):
+
+    if request.method == "GET":
+        query_email = db.execute("SELECT email, verify_key FROM users WHERE email = %s", email).fetchone()
+
+        if query_email[0] == email and query_email[1] == uuid :
+            db.execute("UPDATE users SET is_verified = 1 WHERE email = %s;", email)
+            flash("Your email address was successfully verified.")
+            return redirect('/')
 
 def errorhandler(e):
     """Handle error"""
