@@ -395,7 +395,7 @@ def register():
 
         else:
             # Query database for username
-            db.execute("INSERT INTO users (email, hash, first_name, last_name, is_verified, created_at) VALUES(%s, %s, %s, %s, %s, %s)", request.form.get("email").lower(), (bcrypt.hashpw(request.form.get("password").encode('utf-8'), bcrypt.gensalt())).decode(), request.form.get("first_name").capitalize(), request.form.get("last_name").capitalize(), 0, get_now())
+            db.execute("INSERT INTO users (email, hash, first_name, last_name, is_verified, created_at) VALUES(%s, %s, %s, %s, %s, %s)", request.form.get("email").lower(), (bcrypt.hashpw(request.form.get("password").encode('utf-8'), bcrypt.gensalt())).decode(), request.form.get("first_name").title(), request.form.get("last_name").title(), 0, get_now())
             # session["user_id"] = query[0]
 
             # Alert when registered successfully
@@ -451,7 +451,7 @@ def confirm_password():
 
         if new_password == confirm_password:
             db.execute("UPDATE users SET hash = %s WHERE email = %s", (bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())).decode(), email)
-            db.execute("UPDATE users SET recovery = %s WHERE email = %s", (bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())).decode(), email)
+            db.execute("UPDATE users SET recovery = '' WHERE email = %s", email)
             db.execute("UPDATE users SET is_verified = 1 WHERE email = %s", email)
             flash('Password successfully changed.')
             return render_template('login.html')
@@ -488,6 +488,7 @@ def verify_email(email, uuid):
 
         if query_email[0] == email and query_email[1] == uuid :
             db.execute("UPDATE users SET is_verified = 1 WHERE email = %s;", email)
+            db.execute("UPDATE users SET verify_key = '' WHERE email = %s;", email)
             flash("Your email address was successfully verified.")
             return redirect('/')
 
