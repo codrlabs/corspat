@@ -11,6 +11,7 @@ import uuid
 import time
 import csv
 from sqlalchemy import create_engine
+import os
 
 app = Flask(__name__)
 
@@ -29,13 +30,13 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure SQLAlchemy to use the database
-db = create_engine('postgresql+psycopg2://pwbznxyzdvfvsd:90859372f9d60e0a16687c5020f8cbb59389916d8fd545cf06ebff09f836fb01@ec2-54-196-65-186.compute-1.amazonaws.com:5432/dbpf8a9abului7')
+db = create_engine(os.environ['DATABASE_URL_PSYCOPG'])
 
 # Configure Flask-Mail to use Gmail STMP
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
-# app.config['MAIL_USERNAME'] = '***********'
-# app.config['MAIL_PASSWORD'] = '***********'
+app.config['MAIL_USERNAME'] = os.environ['MAIL_USERNAME']
+app.config['MAIL_PASSWORD'] = os.environ['MAIL_PASSWORD']
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
@@ -423,7 +424,7 @@ def send():
             query_data = db.execute("SELECT email, recovery FROM users WHERE email = %s", forgot_email).fetchone()
 
             # Send email with link key
-            msg = Message('Hello', sender = 'corspat.app@gmail.com', recipients = [request.form.get("email")])
+            msg = Message('Password reset', sender = os.environ['MAIL_USERNAME'], recipients = [request.form.get("email")])
             msg.body = f"Hello, to reset your password please follow this link:\r\nhttps://corspat.herokuapp.com/reset_password/{query_data[0]}/{query_data[1]}"
             mail.send(msg)
 
@@ -471,8 +472,8 @@ def send_verify():
         query_data = db.execute("SELECT email, verify_key FROM users WHERE email = %s", verify_user[1]).fetchone()
 
         # Send email with link key
-        msg = Message('Hello', sender = 'corspat.app@gmail.com', recipients = [verify_user[1]])
-        msg.body = f"Hello, please verify your email by follow this link:\r\nhttp://127.0.0.1:5000/verify_email/{query_data[0]}/{query_data[1]}"
+        msg = Message('Email verification', sender = os.environ['MAIL_USERNAME'], recipients = [verify_user[1]])
+        msg.body = f"Hello, please verify your email by follow this link:\r\nhttps://corspat.herokuapp.com/verify_email/{query_data[0]}/{query_data[1]}"
         mail.send(msg)
         flash('Email sent, please verify your email')
         return redirect('/settings')
