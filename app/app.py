@@ -142,8 +142,19 @@ def toggle_finish(uuid):
 def timetracker():
 
     # Get current courses
-    current_courses = db.execute("SELECT course_uuid, course_title FROM path WHERE user_id = %s AND finished = 0", session['user_id']).fetchall()
+    check_latest = db.execute("SELECT * FROM timetracker WHERE user_id = %s ORDER BY started_at DESC;", session['user_id']).fetchone()
+    
+# if not check_latest[5]: # if latest in progress
 
+
+    if check_latest is not None: # if latest in progress
+        if not check_latest[5]:
+            current_courses = db.execute("SELECT path.course_uuid, path.course_title, timetracker.finished_at FROM path INNER JOIN timetracker ON path.course_uuid=timetracker.course_uuid WHERE path.user_id = %s AND path.finished = 0 ORDER BY timetracker.started_at DESC LIMIT 1;", session['user_id']).fetchone()
+        else:
+            current_courses = db.execute("SELECT course_uuid, course_title FROM path WHERE user_id = %s AND finished = 0 ORDER BY created_at ASC;", session['user_id']).fetchall()
+    else:
+        current_courses = db.execute("SELECT course_uuid, course_title FROM path WHERE user_id = %s AND finished = 0 ORDER BY created_at ASC;", session['user_id']).fetchall()
+ 
     # Get DESC history
     timetrack_history = db.execute("SELECT * FROM timetracker WHERE user_id = %s ORDER BY started_at DESC", session['user_id']).fetchall()
 

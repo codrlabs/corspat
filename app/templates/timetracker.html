@@ -15,13 +15,19 @@ Time Tracker
         <!-- FORM START/STOP -->
         <form action="/update_tt" method="post">
             <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="this_course">
+
                 {% if not current_courses %}
                 <option selected disabled>First, add a course on your path</option>
                 {% endif %}
 
-                {% for course in current_courses %}
-                <option value="{{ course[0] }}">{{ course[1] }}</option>
-                {% endfor %}
+                {% if current_courses[2] == None %}
+                    <option value="{{ current_courses[0] }}">{{ current_courses[1] }}</option>
+                {% else %}
+                    {% for course in current_courses %}
+                        <option value="{{ course[0] }}">{{ course[1] }}</option>
+                    {% endfor %}
+                {% endif %}
+
             </select>
 
             <!-- Buttons -->
