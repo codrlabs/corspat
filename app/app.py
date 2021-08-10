@@ -154,8 +154,8 @@ def timetracker():
         if check_last is not None:
             time_start = datetime.strptime(check_last[4],"%Y-%m-%d %H:%M:%S")
             time_now = datetime.strptime(get_now(),"%Y-%m-%d %H:%M:%S")
-            time_inverval = time_now - time_start
-            return str(datetime.strptime(str(time_inverval),"%H:%M:%S"))[11:]
+            time_interval = time_now - time_start
+            return str(datetime.strptime(str(time_interval),"%H:%M:%S"))[11:]
         else:
             return False
 
