@@ -5,7 +5,7 @@ from flask_session import Session
 from flask_mail import Mail, Message
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 # from tempfile import mkdtemp
-from datetime import datetime
+from datetime import datetime, timedelta
 import random
 import uuid
 import time
@@ -155,7 +155,10 @@ def timetracker():
             time_start = datetime.strptime(check_last[4],"%Y-%m-%d %H:%M:%S")
             time_now = datetime.strptime(get_now(),"%Y-%m-%d %H:%M:%S")
             time_interval = time_now - time_start
-            return str(datetime.strptime(str(time_interval),"%H:%M:%S"))[11:]
+            try:
+                return str(datetime.strptime(str(time_interval), "%H:%M:%S"))[11:]
+            except:
+                return 'TimeGuard'
         else:
             return False
 
@@ -184,12 +187,29 @@ def update_tt():
         flash(good_work())
 
     else:
-        # If row history have started_at then add finished_at
-        db.execute("UPDATE timetracker SET finished_at = %s WHERE user_id = %s AND course_uuid = %s AND finished_at IS NULL", get_now(), session['user_id'], get_data[1])
+        # Test box
+        calculate_now = datetime.strptime(get_now(),"%Y-%m-%d %H:%M:%S")
+        calculate_last = datetime.strptime(check_last[4],"%Y-%m-%d %H:%M:%S")
+        time_interval = str(calculate_now - calculate_last)
 
-        # Calculate difference time
-        time_interval = str(datetime.strptime(get_now(),"%Y-%m-%d %H:%M:%S") - datetime.strptime(check_last[4],"%Y-%m-%d %H:%M:%S"))
+        # Time Guard
+        def timeguard(bool_state):
+            ''' Parameters accepts only True or False '''     
+            db.execute("UPDATE timetracker SET timeguard = %s WHERE user_id = %s AND course_uuid = %s AND finished_at IS NULL", bool_state, session['user_id'], get_data[1])
 
+        # If row history have started_at then add finished_at (if not stopped 1 hours duration max added)
+        try:
+            str(datetime.strptime(str(time_interval), "%H:%M:%S"))[11:] # Test time_interval not > 24 hours
+            finished_time = get_now()            
+        except:
+            finished_time = datetime.strptime(check_last[4],"%Y-%m-%d %H:%M:%S") + timedelta(hours=1)
+            calculate_now = calculate_last + timedelta(hours=1)
+            time_interval = str(calculate_now - calculate_last)
+            timeguard(True)
+
+        # Update finished_at
+        db.execute("UPDATE timetracker SET finished_at = %s WHERE user_id = %s AND course_uuid = %s AND finished_at IS NULL", finished_time, session['user_id'], get_data[1])
+        
         # Update duration
         db.execute("UPDATE timetracker SET duration = %s WHERE user_id = %s AND course_uuid = %s AND duration IS NULL", time_interval, session['user_id'], get_data[1])
 
