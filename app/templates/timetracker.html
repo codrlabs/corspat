@@ -30,9 +30,11 @@ Time Tracker
                 <div class="mb-3">
                     {% if current_courses %}
                         {% if progress == False or timetrack_history[0][5] != None %}
-                        <button type="submit" onclick="startTimer()" class="btn btn-success btn-circle btn-xl text-white">Start</button>
+                            <button type="submit" onclick="startTimer()" class="btn btn-success btn-circle btn-xl text-white">Start</button>
+                        {% elif progress == 'TimeGuard' %}
+                            <button type="submit" onclick="startTimer()" class="btn btn-warning btn-circle btn-xl text-white">Next</button> 
                         {% else %}
-                        <button type="submit" onclick="startTimer()" class="btn btn-danger btn-circle btn-xl text-white">Stop</button>                    
+                            <button type="submit" onclick="startTimer()" class="btn btn-danger btn-circle btn-xl text-white">Stop</button>                    
                         {% endif %}
                     {% else %}
                         <button type="submit" onclick="startTimer()" class="btn btn-success btn-circle btn-xl text-white" disabled>Start</button>
@@ -93,67 +95,76 @@ Time Tracker
 <script>
     const timer = document.getElementById('counter');
 
-    /* Timestamps needed */
-    {% if progress != False %}
-        let time_start = "{{ progress }}";
-        let time_end = ("{{ timetrack_history[0][5] }}" == "None") ? 'None' : "{{ timetrack_history[0][5] }}".slice(11);
+    {% if progress == 'TimeGuard' and timetrack_history[0][5] == None %}
+
+        timer.innerHTML = "Time Guard 🤖"
+    
     {% else %}
-        let time_start = "00:00:00";
-        let time_end = "00:00:00"; 
+
+        /* Timestamps needed */
+        {% if progress != False %}
+            let time_start = "{{ progress }}";
+            let time_end = ("{{ timetrack_history[0][5] }}" == "None") ? 'None' : "{{ timetrack_history[0][5] }}".slice(11);
+        {% else %}
+            let time_start = "00:00:00";
+            let time_end = "00:00:00"; 
+        {% endif %}
+
+        /* Default time */
+        let hr = min = sec = 0;
+
+        /* Timetrack status */
+        let started = 0;
+
+        function checkWatch() {
+            /* Check if status not active, else resume  */
+            if (time_end == "None") {
+                hr = parseInt(time_start.slice(0, 2));
+                min = parseInt(time_start.slice(3, 5));
+                sec = parseInt(time_start.slice(6, 8));
+                started = 1;
+            }
+            else {
+                started = 0;
+            }
+        }
+
+        /* Function to check */
+        checkWatch()
+
+        // Stopwatch system
+        function startTimer() {
+            if (started == 1) {
+
+                sec++;
+            
+                if (sec == 60) {
+                    sec = 0;
+                    min++;
+                }
+                if (min == 60) {
+                    min = sec = 0;
+                    hr++;
+                }
+            
+                if (sec.toString().length < 2) {
+                    sec = '0' + sec;
+                }
+                if (min.toString().length < 2) {
+                    min = '0' + min;
+                }
+                if (hr.toString().length < 2) {
+                    hr = '0' + hr;
+                }
+                
+                timer.innerHTML = hr + ':' + min + ':' + sec;        
+                setTimeout("startTimer()", 1000);
+            }
+        }
+        startTimer()
+
     {% endif %}
 
-    /* Default time */
-    let hr = min = sec = 0;
-
-    /* Timetrack status */
-    let started = 0;
-
-    function checkWatch() {
-        /* Check if status not active, else resume  */
-        if (time_end == "None") {
-            hr = parseInt(time_start.slice(0, 2));
-            min = parseInt(time_start.slice(3, 5));
-            sec = parseInt(time_start.slice(6, 8));
-            started = 1;
-        }
-        else {
-            started = 0;
-        }
-    }
-
-    /* Function to check */
-    checkWatch()
-
-    // Stopwatch system
-    function startTimer() {
-        if (started == 1) {
-
-            sec++;
-        
-            if (sec == 60) {
-                sec = 0;
-                min++;
-            }
-            if (min == 60) {
-                min = sec = 0;
-                hr++;
-            }
-        
-            if (sec.toString().length < 2) {
-                sec = '0' + sec;
-            }
-            if (min.toString().length < 2) {
-                min = '0' + min;
-            }
-            if (hr.toString().length < 2) {
-                hr = '0' + hr;
-            }
-            
-            timer.innerHTML = hr + ':' + min + ':' + sec;        
-            setTimeout("startTimer()", 1000);
-        }
-    }
-    startTimer()
 </script>
 {% endblock %}
 
