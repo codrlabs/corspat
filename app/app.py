@@ -45,10 +45,13 @@ mail = Mail(app)
 now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 @app.route("/")
-@login_required
 def index():
     """First page to show after log in"""
-    return redirect("/path")
+    if session.get("user_id") is None:
+        return render_template("homepage.html")        
+    else:
+        return redirect("/path")
+    
 
 @app.context_processor
 def alert_center():
