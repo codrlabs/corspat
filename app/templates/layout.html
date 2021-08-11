@@ -21,8 +21,9 @@
 <body id="page-top">
 {% endif %}
 
-    <!-- Toasts (test zone) -->
+    
     {% if get_flashed_messages() %}
+        <!-- Toasts -->
         <div class="toast align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive"
             aria-atomic="true">
             {% for message in get_flashed_messages() %}
@@ -36,7 +37,6 @@
             {% endfor %}
         </div>
     {% endif %}
-    <!-- Toasts (end zone) -->
 
     {% if session.user_id %}
     <div id="wrapper">
@@ -125,7 +125,9 @@
             </div>
             <footer class="bg-white sticky-footer">
                 <div class="container my-auto">
-                    <div class="text-center my-auto copyright"><span>Copyright © <a href="https://inidal.dev" target="_blank">Nidal Iguer</a> 2021</span></div>
+                    <div class="text-center my-auto copyright">
+                        <span class="mb-3">Copyright © Corspat 2021</span>
+                    </div>
                 </div>
             </footer>
         {% if session.user_id %}
