@@ -13,6 +13,10 @@ import csv
 from sqlalchemy import create_engine
 import os
 
+# Local dotenv
+from dotenv import load_dotenv
+load_dotenv()
+
 app = Flask(__name__)
 
 # Ensure responses aren't cached
