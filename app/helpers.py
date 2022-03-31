@@ -6,6 +6,11 @@ from datetime import datetime
 from urllib.parse import urlparse
 import random
 from sqlalchemy import create_engine
+import os
+
+# For local dotenv
+from dotenv import load_dotenv
+load_dotenv()
 
 # Get requests from API
 response = requests.get("https://type.fit/api/quotes").json()
