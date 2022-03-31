@@ -11,7 +11,7 @@ from sqlalchemy import create_engine
 response = requests.get("https://type.fit/api/quotes").json()
 
 # Configure SQLite to use the database
-db = create_engine('postgresql+psycopg2://pwbznxyzdvfvsd:90859372f9d60e0a16687c5020f8cbb59389916d8fd545cf06ebff09f836fb01@ec2-54-196-65-186.compute-1.amazonaws.com:5432/dbpf8a9abului7')
+db = create_engine(os.environ['DATABASE_URL_PSYCOPG'])
 
 def quote_length():
     return len(response)
