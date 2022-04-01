@@ -88,13 +88,14 @@ The website is online and working.
 
 * ###### Backend
 	* `PostgreSQL`
+	* `Docker`
 	* `Python`
 		* `Flask`
 		* `SQLAlchemy`
-        * `Flask Mail`
-        * `bcrypt`
-        * `BeautifulSoup`
-        * `...`
+		* `Flask Mail`
+		* `bcrypt`
+		* `BeautifulSoup`
+		* `...`
 
 * ###### Hosting
 	* `Heroku`
