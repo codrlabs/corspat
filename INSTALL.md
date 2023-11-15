@@ -20,4 +20,4 @@ Alternatively, you can use the "Right Button > Compose Up" option in your IDE if
 
 ## Database Setup
 
-1. Create tables using the `app/sql/create_tables.sql` script.
+Create tables using the `app/sql/create_tables.sql` script using your preferred DBMS software.
