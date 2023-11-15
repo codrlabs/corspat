@@ -4,8 +4,10 @@ CREATE TABLE users (
  hash VARCHAR,
  first_name VARCHAR,
  last_name VARCHAR,
- is_checked BOOLEAN,
- created_at VARCHAR
+ is_verified INT,
+ created_at VARCHAR,
+ "recovery" VARCHAR,
+ verify_key VARCHAR
 );
 
 CREATE TABLE path (
@@ -16,7 +18,7 @@ CREATE TABLE path (
  course_title VARCHAR,
  course_desc VARCHAR,
  course_img VARCHAR,
- finished BOOLEAN,
+ finished INT,
  created_at VARCHAR
 );
 
@@ -28,7 +30,8 @@ CREATE TABLE timetracker (
  started_at VARCHAR,
  finished_at VARCHAR,
  duration VARCHAR,
- track_uuid VARCHAR
+ track_uuid VARCHAR,
+ timeguard BOOLEAN
 );
 
 CREATE TABLE alerts (
@@ -36,5 +39,5 @@ CREATE TABLE alerts (
  alert_msg VARCHAR,
  alert_urgency INT,
  alert_link VARCHAR,
- created_at VARCHAR
+ created_at TIMESTAMP
 );
