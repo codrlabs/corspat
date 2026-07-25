@@ -1,5 +1,22 @@
 # 📚 Corspat — Build Your Own Path
 
+> [!WARNING]
+> **Unmaintained and archived.** This was my CS50 final project (2021). It is no longer developed or deployed, and the versions pinned in `app/requirements.txt` carry known CVEs. Please don't run or deploy it as-is. Kept public for reference only.
+
+<details>
+<summary>Notes for reviving it later</summary>
+
+Checked against PyPI in July 2026:
+
+- **Python 3.9 → 3.12+.** Current `requests`, `urllib3`, `click`, `gunicorn` and `soupsieve` all require ≥ 3.10. Update both `Dockerfile` (`python:3.9.12-bullseye`) and `app/runtime.txt` (`python-3.9.6`).
+- **Flask 2.0.1 → 3.1.x**, forced by the Werkzeug ≥ 3.1.4 advisory. Brings Werkzeug 3.1.x, Jinja2 3.1.6, itsdangerous 2.2.0, blinker 1.9.0.
+- **Flask-Mail 0.9.1 → 0.10.0** and **Flask-Session 0.4.0 → 0.8.0**; both older versions predate Flask 3.
+- **Keep SQLAlchemy on 1.4.x** (1.4.54 is the last one). `app.py` uses the legacy `engine.execute("SELECT …", param)` call, which was *removed* in SQLAlchemy 2.0 — moving to 2.x means rewriting every query in `app.py` and `helpers.py` around `text()` and `Connection.execute()`.
+- **Code change required regardless:** `app.py` calls `send_file(..., attachment_filename=...)`. That argument was removed in Flask 2.2, so the `/settings/dl` CSV export breaks the moment Flask is upgraded — it needs to become `download_name=...`.
+- Also worth a look: no `SECRET_KEY` is configured, `helpers.py` makes a network call at import time (so a slow or failed API call blocks startup), and the `corspat.herokuapp.com` links in the password-reset and verification emails are dead.
+
+</details>
+
 #### Video Demo:
 [Click here to watch the demo on YouTube.](https://youtu.be/PNtzgsMiYY4)
 
